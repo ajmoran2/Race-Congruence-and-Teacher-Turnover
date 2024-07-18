@@ -1,0 +1,107 @@
+
+clear all
+capture log close
+set more off
+
+*********************************************************************************************************************
+* TITLE:	Race Congruence File Upload
+* PURPOSE:	Upload personnel and school-level files
+* AUTHOR:	Alex Moran
+* DATE:		08/20/23
+*********************************************************************************************************************
+
+/*****
+DO NOT RUN THIS FILE UNLESS YOU HAVE LIKE THREE HOURS TO KILL
+****/
+
+global root [ADD YOUR FILEPATH HERE]
+
+cd "${root}Race Congruence/"
+
+*************
+* I create a specific environment in my folders for downloaded files, cleaned data, and output.  You should either duplicate this in your environment or change the globals throughout this do-file
+*************
+global ORIGDATA "Original_data/"
+global CLNDATA "Clean_data/"
+global OUTPUT "Output/"
+
+**** Upload personnel files
+	import excel "${ORIGDATA}tblStaffPublicRelease2013-14.xlsx", firstrow clear
+		save "${ORIGDATA}personnel1314.dta", replace
+		
+	import excel "${ORIGDATA}tblStaffPublicRelease2014-15.xlsx", firstrow clear
+		save "${ORIGDATA}personnel1415.dta", replace
+
+	import excel "${ORIGDATA}tblStaffPublicRelease2015-16.xlsx", firstrow clear
+		save "${ORIGDATA}personnel1516.dta", replace
+		
+	import excel "${ORIGDATA}tblStaffPublicRelease2016-17.xlsx", firstrow clear
+		save "${ORIGDATA}personnel1617.dta", replace
+		
+	import excel "${ORIGDATA}tblStaffPublicRelease2017-18.xlsx", firstrow clear
+		save "${ORIGDATA}personnel1718.dta", replace
+		
+	import excel "${ORIGDATA}tblStaffPublicRelease2018-19.xlsx", firstrow clear
+		save "${ORIGDATA}personnel1819.dta", replace
+		
+	import excel "${ORIGDATA}tblStaffPublicRelease2019-20.xlsx", firstrow clear
+		save "${ORIGDATA}personnel1920.dta", replace
+		
+	import excel "${ORIGDATA}tblStaffPublicRelease2020-21.xlsx", firstrow clear
+		save "${ORIGDATA}personnel2021.dta", replace
+
+clear all
+**** upload school-level datasets
+
+	forvalues i=2013/2021 {
+		educationdata using "school ccd enrollment race sex", subset(year=`i' fips=42) clear
+			save "${ORIGDATA}enrollment`i'", replace
+	}
+
+
+	forvalues i=2013/2021 {
+		educationdata using "school ccd directory", subset(year=`i' fips=42) clear
+			save "${ORIGDATA}directory`i'", replace
+	}
+	
+	* ELL data
+		import excel "${ORIGDATA}2013-2014 LEP Student by LEA and School.xlsx", clear firstrow
+			save "${ORIGDATA}ell1314.dta", replace
+		import excel "${ORIGDATA}2014-2015 LEP Student by LEA and School.xlsx", clear firstrow
+			save "${ORIGDATA}ell1415.dta", replace
+		import excel "${ORIGDATA}2015-2016 LEP Student by LEA and School.xlsx", clear firstrow
+			save "${ORIGDATA}ell1516.dta", replace
+		import excel "${ORIGDATA}2016-2017 EL Students by LEA and School.xlsx", clear firstrow
+			save "${ORIGDATA}ell1617.dta", replace
+		import excel "${ORIGDATA}2017-2018 EL Student by LEA and School.xlsx", clear firstrow
+			save "${ORIGDATA}ell1718.dta", replace
+		import excel "${ORIGDATA}2018-2019 EL Student by LEA and School.xlsx", clear firstrow
+			save "${ORIGDATA}ell1819.dta", replace
+		import excel "${ORIGDATA}2019-2020 EL Student by LEA and School.xlsx", clear firstrow
+			save "${ORIGDATA}ell1920.dta", replace
+		import excel "${ORIGDATA}2020-2021 EL Students by LEA and School.xlsx", clear firstrow
+			save "${ORIGDATA}ell2021.dta", replace
+	
+	* SPED data
+		import excel "C:/Users/ajmor/OneDrive - Florida State University/RESEARCH/Race Congruence/Original_data/speced_pa.xlsx", clear firstrow sheet("Data")
+			drop DISTRICT_NAME LOCATION_NAME SPECIAL_ED_CODE
+			rename DISTRICT_KEY district_code
+				destring district_code, replace
+				format district_code %15.0g
+			rename LOCATION_ID school_code
+				destring school_code, replace
+			rename F sped_s2013
+			rename G sped_s2014
+			rename H sped_s2015
+			rename I sped_s2016
+			rename J sped_s2017
+			rename K sped_s2018
+			rename L sped_s2019
+			rename M sped_s2020
+			
+			reshape long sped_s, i(district_code school_code) j(fallyear)
+		save "${CLNDATA}sped_master.dta", replace
+	
+
+
+
