@@ -1,0 +1,1489 @@
+
+*********************************************************************************************************************
+* TITLE:	Race Congruence File Cleaning
+* PURPOSE:	Clean personnel files and school files and merge them all together
+* AUTHOR:	Alex Moran
+* DATE:		08/20/23
+
+*********************************************************************************************************************
+
+global root [ADD YOUR FILEPATH HERE]
+
+cd "${root}Race Congruence/"
+
+*****
+***** My environment contains subfolders where I download, save, and output everything.  You will either have to add these folders to your space or change all of the globals throughout the do-file.
+
+global ORIGDATA "Original_data/"
+global CLNDATA "Clean_data/"
+global OUTPUT "Output/"
+*****
+*****
+
+use "${ORIGDATA}personnel1314.dta", clear
+		rename *, lower
+		gen fallyear = 2013
+		gen springyear = 2014
+		rename publicid pid
+		gen male_t = (gender == "M")
+		
+			gen amind_t = (strmatch(racedesc, "American Indian*"))
+			gen asian_t = (strmatch(racedesc, "Asian*"))
+			gen black_t = (strmatch(racedesc, "Black*"))
+			gen hisp_t = (strmatch(racedesc, "Hispanic *"))
+			gen multi_t = (strmatch(racedesc, "Multi*"))
+			gen nhpi_t = (strmatch(racedesc, "Native Hawaiian*"))
+			gen white_t = (strmatch(racedesc, "White*"))
+			
+			gen race_eth = .
+				replace race_eth = 1 if amind_t == 1
+				replace race_eth = 2 if asian_t == 1
+				replace race_eth = 3 if black_t == 1
+				replace race_eth = 4 if hisp_t == 1
+				replace race_eth = 5 if multi_t == 1
+				replace race_eth = 6 if nhpi_t == 1
+				replace race_eth = 7 if white_t == 1
+		
+		rename annualsalary salary
+		
+		sort degreedescription
+		encode degreedescription, gen(degree)
+		gen grad_degree = (inlist(degree, 3, 7, 9)) // masters, doctoral, specialists
+		
+		rename yearsined exp_total
+		rename yearsinlea exp_dist
+		destring exp_total, replace
+		destring exp_dist, replace
+		
+		rename aun district_code
+		destring district_code, replace
+		
+		rename leaname district_name
+		rename leatypedescription district_type
+		
+		drop leacountycd leacounty
+		
+		destring birthyear, replace
+		
+		rename schnum school_code
+		destring school_code, replace
+		
+		rename school school_name
+		
+		drop iu schoolcountycode schoolcounty
+		
+		gen fulltime = (ftpt == "full time")
+		drop ftpt
+		
+		sort activeleaveother
+		encode activeleaveother, gen(active_status)
+		rename activeleaveother status
+		
+		destring fte, replace
+		
+		drop staffsnapshotdate lastname firstname middlename suffix sy
+		
+		drop jobclass edfcd categorydescription pos2012
+		
+		rename assignmentdescription assign
+		rename positiondescription position 
+		rename edfactsdescription edfactsdesc 
+		
+		order fallyear springyear pid district_code district_name school_code school_name
+		
+		save "${CLNDATA}personnel1314_clean.dta", replace
+
+use "${ORIGDATA}personnel1415.dta", clear
+		rename *, lower
+		gen fallyear = 2014
+		gen springyear = 2015
+		rename publicid pid
+		gen male_t = (gender == "M")
+		
+			gen amind_t = (strmatch(racedesc, "American Indian*"))
+			gen asian_t = (strmatch(racedesc, "Asian*"))
+			gen black_t = (strmatch(racedesc, "Black*"))
+			gen hisp_t = (strmatch(racedesc, "Hispanic *"))
+			gen multi_t = (strmatch(racedesc, "Multi*"))
+			gen nhpi_t = (strmatch(racedesc, "Native Hawaiian*"))
+			gen white_t = (strmatch(racedesc, "White*"))
+			
+			gen race_eth = .
+				replace race_eth = 1 if amind_t == 1
+				replace race_eth = 2 if asian_t == 1
+				replace race_eth = 3 if black_t == 1
+				replace race_eth = 4 if hisp_t == 1
+				replace race_eth = 5 if multi_t == 1
+				replace race_eth = 6 if nhpi_t == 1
+				replace race_eth = 7 if white_t == 1
+		
+		rename annualsalary salary
+		destring salary, replace
+		
+		sort degreedescription
+		encode degreedescription, gen(degree)
+		gen grad_degree = (inlist(degree, 3, 7, 9)) // masters, doctoral, specialists
+		
+		rename yearsined exp_total
+		rename yearsinlea exp_dist
+		destring exp_total, replace
+		destring exp_dist, replace
+		
+		rename aun district_code
+		destring district_code, replace
+		
+		rename leaname district_name
+		rename leatypedescription district_type
+		
+		drop leacountycd leacounty 
+		destring birthyear, replace
+		
+		rename schnum school_code
+		destring school_code, replace
+		
+		rename school school_name
+		
+		drop iu schoolcountycode schoolcounty
+		
+		gen fulltime = (ftpt == "full time")
+		drop ftpt
+		
+		sort status
+		encode status, gen(active_status)
+		*drop status
+
+		destring fte, replace
+		
+		drop staffsnapshotdate lastname firstname middlename suffix sy
+
+		drop jobclass edfcd categorydescription
+		
+		rename assignmentdescription assign
+		rename positiondescription position 
+		rename edfactsdescription edfactsdesc 
+
+		order fallyear springyear pid district_code district_name school_code school_name
+		
+		save "${CLNDATA}personnel1415_clean.dta", replace
+
+use "${ORIGDATA}personnel1516.dta", clear
+		rename *, lower
+		gen fallyear = 2015
+		gen springyear = 2016
+		rename publicid pid
+		gen male_t = (gender == "M")
+		
+			gen amind_t = (strmatch(racedesc, "American Indian*"))
+			gen asian_t = (strmatch(racedesc, "Asian*"))
+			gen black_t = (strmatch(racedesc, "Black*"))
+			gen hisp_t = (strmatch(racedesc, "Hispanic *"))
+			gen multi_t = (strmatch(racedesc, "Multi*"))
+			gen nhpi_t = (strmatch(racedesc, "Native Hawaiian*"))
+			gen white_t = (strmatch(racedesc, "White*"))
+			
+			gen race_eth = .
+				replace race_eth = 1 if amind_t == 1
+				replace race_eth = 2 if asian_t == 1
+				replace race_eth = 3 if black_t == 1
+				replace race_eth = 4 if hisp_t == 1
+				replace race_eth = 5 if multi_t == 1
+				replace race_eth = 6 if nhpi_t == 1
+				replace race_eth = 7 if white_t == 1
+		
+		rename annualsalary salary
+		drop if strmatch(salary, "Salary*")
+		destring salary, replace
+		
+		sort degreedescription
+		encode degreedescription, gen(degree)
+		gen grad_degree = (inlist(degree, 3, 7, 9)) // masters, doctoral, specialists
+		
+		rename yearsined exp_total
+		rename yearsinlea exp_dist
+		destring exp_total, replace
+		destring exp_dist, replace
+		
+		rename aun district_code
+		destring district_code, replace
+		destring birthyear, replace
+		
+		rename leaname district_name
+		rename leatypedescription district_type
+		
+		drop leacountycd leacounty 
+		
+		rename schnum school_code
+		destring school_code, replace
+		
+		rename school school_name
+		
+		drop iu schoolcountycode schoolcounty
+		
+		gen fulltime = (ftpt == "full time")
+		drop ftpt
+		
+		sort status
+		encode status, gen(active_status)
+		*drop status
+		
+		destring fte, replace
+
+		drop staffsnapshotdate lastname firstname middlename suffix sy
+		
+		drop jobclass edfcd categorydescription
+		
+		rename assignmentdescription assign
+		rename positiondescription position 
+		rename edfactsdescription edfactsdesc 
+		
+		order fallyear springyear pid district_code district_name school_code school_name
+		
+		save "${CLNDATA}personnel1516_clean.dta", replace
+
+use "${ORIGDATA}personnel1617.dta", clear
+		rename *, lower
+		gen fallyear = 2016
+		gen springyear = 2017
+		rename publicid pid
+		gen male_t = (gender == "M")
+		
+			gen amind_t = (strmatch(race, "American Indian*"))
+			gen asian_t = (strmatch(race, "Asian*"))
+			gen black_t = (strmatch(race, "Black*"))
+			gen hisp_t = (strmatch(race, "Hispanic *"))
+			gen multi_t = (strmatch(race, "Multi*"))
+			gen nhpi_t = (strmatch(race, "Native Hawaiian*"))
+			gen white_t = (strmatch(race, "White*"))
+			
+			gen race_eth = .
+				replace race_eth = 1 if amind_t == 1
+				replace race_eth = 2 if asian_t == 1
+				replace race_eth = 3 if black_t == 1
+				replace race_eth = 4 if hisp_t == 1
+				replace race_eth = 5 if multi_t == 1
+				replace race_eth = 6 if nhpi_t == 1
+				replace race_eth = 7 if white_t == 1
+		
+		rename annualsalary salary
+		drop if strmatch(salary, "Salary*")
+		destring salary, replace
+		
+		sort degreedescription
+		encode degreedescription, gen(degree)
+		gen grad_degree = (inlist(degree, 3, 7, 9)) // masters, doctoral, specialists
+		
+		rename yearsined exp_total
+		rename yearsinlea exp_dist
+		destring exp_total, replace
+		destring exp_dist, replace
+		destring birthyear, replace
+		
+		rename aun district_code
+		destring district_code, replace
+		
+		rename leaname district_name
+		rename leatypedescription district_type
+		
+		drop leacountycd leacounty 
+		
+		rename schnum school_code
+		destring school_code, replace
+		
+		rename school school_name
+		
+		drop iu schoolcountycode schoolcounty
+		
+		gen fulltime = (ftpt == "full time")
+		drop ftpt
+		
+		sort status
+		encode status, gen(active_status)
+		
+		destring fte, replace
+
+		drop staffsnapshotdate lastname firstname middlename suffix sy
+
+		drop jobclass edf categorydescription2017
+		
+		rename assignmentdescription assign
+		rename positiondescription2017 position 
+		rename edfcategory edfactsdesc 
+		rename pos2017 positioncd
+
+		order fallyear springyear pid district_code district_name school_code school_name
+		
+		save "${CLNDATA}personnel1617_clean.dta", replace
+
+use "${ORIGDATA}personnel1718.dta", clear
+		rename *, lower
+		gen fallyear = 2017
+		gen springyear = 2018
+		rename publicid pid
+		gen male_t = (gender == "Male")
+		
+			gen amind_t = (strmatch(raceethnicitydesc, "American Indian*"))
+			gen asian_t = (strmatch(raceethnicitydesc, "Asian*"))
+			gen black_t = (strmatch(raceethnicitydesc, "Black*"))
+			gen hisp_t = (strmatch(raceethnicitydesc, "Hispanic*"))
+			gen multi_t = (strmatch(raceethnicitydesc, "Multi*"))
+			gen nhpi_t = (strmatch(raceethnicitydesc, "Native Hawaiian*"))
+			gen white_t = (strmatch(raceethnicitydesc, "White*"))
+			
+			gen race_eth = .
+				replace race_eth = 1 if amind_t == 1
+				replace race_eth = 2 if asian_t == 1
+				replace race_eth = 3 if black_t == 1
+				replace race_eth = 4 if hisp_t == 1
+				replace race_eth = 5 if multi_t == 1
+				replace race_eth = 6 if nhpi_t == 1
+				replace race_eth = 7 if white_t == 1
+		
+		rename annualsalary salary
+		drop if strmatch(salary, "Salary*")
+		destring salary, replace
+
+		sort degreedescription
+		encode degreedescription, gen(degree)
+		gen grad_degree = (inlist(degree, 3, 7, 9)) // masters, doctoral, specialists
+		
+		rename yearsined exp_total
+		rename yearsinlea exp_dist
+		destring exp_total, replace
+		destring exp_dist, replace
+		destring birthyear, replace
+		
+		rename aun district_code
+		destring district_code, replace
+		
+		rename leaname district_name
+		rename leatypedescription district_type
+		
+		drop leacountycd leacounty 
+		
+		rename schnum school_code
+		destring school_code, replace
+		
+		rename school school_name
+		
+		drop iu iuname
+		
+		gen fulltime = (ftpt == "full time")
+		drop ftpt
+		
+		sort status
+		encode status, gen(active_status)
+		
+		destring fte, replace
+
+		drop staffsnapshotdate lastname firstname middlename suffix sy
+
+		drop jobclass edf categorydescription2017
+		
+		rename assignmentdescription assign
+		rename positiondescription2017 position 
+		rename edfcategory edfactsdesc 
+		rename pos2017 positioncd
+
+		order fallyear springyear pid district_code district_name school_code school_name
+		
+		save "${CLNDATA}personnel1718_clean.dta", replace
+
+use "${ORIGDATA}personnel1819.dta", clear
+		rename *, lower
+		gen fallyear = 2018
+		gen springyear = 2019
+		rename publicid pid
+		gen male_t = (gender == "Male")
+		
+			gen amind_t = (strmatch(raceethnicitydesc, "American Indian*"))
+			gen asian_t = (strmatch(raceethnicitydesc, "Asian*"))
+			gen black_t = (strmatch(raceethnicitydesc, "Black*"))
+			gen hisp_t = (strmatch(raceethnicitydesc, "Hispanic*"))
+			gen multi_t = (strmatch(raceethnicitydesc, "Multi*"))
+			gen nhpi_t = (strmatch(raceethnicitydesc, "Native Hawaiian*"))
+			gen white_t = (strmatch(raceethnicitydesc, "White*"))
+			
+			gen race_eth = .
+				replace race_eth = 1 if amind_t == 1
+				replace race_eth = 2 if asian_t == 1
+				replace race_eth = 3 if black_t == 1
+				replace race_eth = 4 if hisp_t == 1
+				replace race_eth = 5 if multi_t == 1
+				replace race_eth = 6 if nhpi_t == 1
+				replace race_eth = 7 if white_t == 1
+		
+		rename annualsalary salary
+		drop if strmatch(salary, "Salary*")
+		destring salary, replace
+
+		sort degreedescription
+		encode degreedescription, gen(degree)
+		gen grad_degree = (inlist(degree, 3, 7, 9)) // masters, doctoral, specialists
+		
+		rename yearsined exp_total
+		rename yearsinlea exp_dist
+		destring exp_total, replace
+		destring exp_dist, replace
+		destring birthyear, replace
+		
+		rename aun district_code
+		destring district_code, replace
+		
+		rename leaname district_name
+		rename leatypedescription district_type
+		
+		drop leacountycd 
+		
+		rename schnum school_code
+		replace school_code = "0000" if school_code == "Off-Site"
+		destring school_code, replace
+		
+		rename school school_name
+		
+		drop iu iuname
+		
+		gen fulltime = (ftpt == "full time")
+		drop ftpt
+		
+		sort status
+		encode status, gen(active_status)
+		
+		destring fte, replace
+
+		drop staffsnapshotdate lastname firstname middlename suffix sy
+
+		drop jobclass edfnum categorydescription2017
+		
+		rename assignmentdescription assign
+		rename positiondescription2017 position 
+		rename edfcategory edfactsdesc 
+		rename pos2017 positioncd
+
+		order fallyear springyear pid district_code district_name school_code school_name
+		
+		save "${CLNDATA}personnel1819_clean.dta", replace
+
+use "${ORIGDATA}personnel1920.dta", clear
+		rename *, lower
+		gen fallyear = 2019
+		gen springyear = 2020
+		rename publicid pid
+		gen male_t = (gender == "Male")
+		
+			gen amind_t = (strmatch(raceethnicitydesc, "American Indian*"))
+			gen asian_t = (strmatch(raceethnicitydesc, "Asian*"))
+			gen black_t = (strmatch(raceethnicitydesc, "Black*"))
+			gen hisp_t = (strmatch(raceethnicitydesc, "Hispanic*"))
+			gen multi_t = (strmatch(raceethnicitydesc, "Multi*"))
+			gen nhpi_t = (strmatch(raceethnicitydesc, "Native Hawaiian*"))
+			gen white_t = (strmatch(raceethnicitydesc, "White*"))
+			
+			gen race_eth = .
+				replace race_eth = 1 if amind_t == 1
+				replace race_eth = 2 if asian_t == 1
+				replace race_eth = 3 if black_t == 1
+				replace race_eth = 4 if hisp_t == 1
+				replace race_eth = 5 if multi_t == 1
+				replace race_eth = 6 if nhpi_t == 1
+				replace race_eth = 7 if white_t == 1
+		
+		rename annualsalary salary
+		drop if strmatch(salary, "Salary*")
+		destring salary, replace
+		
+		sort degreedescription
+		encode degreedescription, gen(degree)
+		gen grad_degree = (inlist(degree, 3, 7, 9)) // masters, doctoral, specialists
+		
+		rename yearsined exp_total
+		rename yearsinlea exp_dist
+		destring exp_total, replace
+		destring exp_dist, replace
+		destring birthyear, replace
+		
+		rename aun district_code
+		destring district_code, replace
+		
+		rename leaname district_name
+		rename leatypedescription district_type
+		
+		drop leacountycd 
+		
+		rename schnum school_code
+		replace school_code = "0000" if school_code == "Off-Site"
+		destring school_code, replace
+		
+		rename school school_name
+		
+		drop iu iuname
+		
+		gen fulltime = (ftpt == "full time")
+		drop ftpt
+		
+		sort status
+		encode status, gen(active_status)
+		
+		destring fte, replace
+
+		drop staffsnapshotdate lastname firstname middlename suffix sy
+
+		drop jobclass edfnum categorydescription2017
+		
+		rename assignmentdescription assign
+		rename positiondescription2017 position 
+		rename edfcategory edfactsdesc 
+		rename pos2017 positioncd
+
+		order fallyear springyear pid district_code district_name school_code school_name
+		
+		save "${CLNDATA}personnel1920_clean.dta", replace
+
+use "${ORIGDATA}personnel2021.dta", clear
+		rename *, lower
+		gen fallyear = 2020
+		gen springyear = 2021
+		rename publicid pid
+		gen male_t = (gender == "Male")
+		
+			gen amind_t = (strmatch(raceethnicitydesc, "American Indian*"))
+			gen asian_t = (strmatch(raceethnicitydesc, "Asian*"))
+			gen black_t = (strmatch(raceethnicitydesc, "Black*"))
+			gen hisp_t = (strmatch(raceethnicitydesc, "Hispanic*"))
+			gen multi_t = (strmatch(raceethnicitydesc, "Multi*"))
+			gen nhpi_t = (strmatch(raceethnicitydesc, "Native Hawaiian*"))
+			gen white_t = (strmatch(raceethnicitydesc, "White*"))
+			
+			gen race_eth = .
+				replace race_eth = 1 if amind_t == 1
+				replace race_eth = 2 if asian_t == 1
+				replace race_eth = 3 if black_t == 1
+				replace race_eth = 4 if hisp_t == 1
+				replace race_eth = 5 if multi_t == 1
+				replace race_eth = 6 if nhpi_t == 1
+				replace race_eth = 7 if white_t == 1
+		
+		rename annualsalary salary
+		drop if strmatch(salary, "Salary*")
+		destring salary, replace
+		
+		sort degreedescription
+		encode degreedescription, gen(degree)
+		gen grad_degree = (inlist(degree, 3, 7, 9)) // masters, doctoral, specialists
+		
+		rename yearsined exp_total
+		rename yearsinlea exp_dist
+		destring exp_total, replace
+		destring exp_dist, replace
+		destring birthyear, replace
+		
+		rename aun district_code
+		destring district_code, replace
+		
+		rename leaname district_name
+		rename leatypedescription district_type
+		
+		drop leacountycd 
+		
+		rename schnum school_code
+		replace school_code = "0000" if school_code == "Off-Site"
+		destring school_code, replace
+		
+		rename school school_name
+		
+		drop iu iuname
+		
+		gen fulltime = (ftpt == "full time")
+		drop ftpt
+		
+		sort status
+		encode status, gen(active_status)
+		
+		destring fte, replace
+
+		drop staffsnapshotdate lastname firstname middlename suffix sy
+
+		drop jobclass edfnum categorydescription2017
+		
+		rename assignmentdescription assign
+		rename positiondescription2017 position 
+		rename edfcategory edfactsdesc 
+		rename pos2017 positioncd
+
+		order fallyear springyear pid district_code district_name school_code school_name
+		
+		save "${CLNDATA}personnel2021_clean.dta", replace
+
+	* append personnel datasets together and save master file
+	use "${CLNDATA}personnel1314_clean.dta", clear
+	append using "${CLNDATA}personnel1415_clean.dta"
+	append using "${CLNDATA}personnel1516_clean.dta"
+	append using "${CLNDATA}personnel1617_clean.dta"
+	append using "${CLNDATA}personnel1718_clean.dta"
+	append using "${CLNDATA}personnel1819_clean.dta"
+	append using "${CLNDATA}personnel1920_clean.dta"
+	append using "${CLNDATA}personnel2021_clean.dta"
+	
+	format district_code %15.0g
+	gen othtoc_t = (amind_t == 1 | asian_t == 1 | multi_t == 1 | nhpi_t == 1)
+	
+**** cleaning of personnel master file
+	
+	gen novice3_t = (exp_total <= 3)
+	gen tch_exp = .
+		replace tch_exp = 1 if exp_total >= 0 & exp_total <= 3
+		replace tch_exp = 2 if exp_total > 3 & exp_total <= 10
+		replace tch_exp = 3 if exp_total > 10 & exp_total <= 20
+		replace tch_exp = 4 if exp_total > 20
+		
+		lab var tch_exp "Teaching Experience"
+		lab def tch_exp 1 "3 or less years" 2 "4-10 years" 3 "11-20 years" 4 "More than 20 years"
+		lab val tch_exp tch_exp 
+		
+	format pid %20.0g
+	sort pid fallyear district_code school_code
+	
+**# restrictions for race congruence analysis
+	gen teacher_obs = (inlist(edfactsdesc, "ELMTCH", "KGTCH", "PKTCH", "SECTCH", "UGTCH"))
+	bysort pid: egen ever_teacher_flag_temp = mean(teacher_obs)
+	gen ever_teacher_flag = (ever_teacher_flag_temp > 0)
+	
+	gen principal = (inlist(assigncd, "1100", "1105", "1111"))
+		gen prin_black_temp = (principal == 1 & black_t == 1)
+		gen prin_white_temp = (principal == 1 & white_t == 1)
+		
+		foreach var in black white {
+			bysort district_code school_code fallyear: egen prin_`var' = total(prin_`var'_temp)
+			replace prin_`var' = 1 if prin_`var' > 0
+			replace prin_`var' = 0 if mi(prin_`var')
+		}
+		
+	drop if ever_teacher_flag == 0 // dropping observations who never serve in a teacher role
+	
+	*gen active_flag = (status == "Active") // only active teacher observations
+		*bys pid: egen active_drop = min(active_flag)
+		*tab active_drop, mi
+		
+		*drop if active_drop == 0 // dropping all teachers who went on sabbaticals or military leave or something odd
+	
+	* need to find a way to consolidate multiple teacher observations per year into one obs for that year 
+	
+	gsort pid fallyear district_code school_code -fte
+	
+	duplicates report pid fallyear
+	duplicates tag pid fallyear, gen(dup_tag)
+		
+	unique district_code school_code, by(pid fallyear) gen(school_dup)
+	bysort pid fallyear: egen school_dup_temp = mean(school_dup)
+	replace school_dup = school_dup_temp if mi(school_dup)
+	bysort pid: egen school_dup_max = max(school_dup)
+		tab dup_tag school_dup, mi
+	drop if school_dup_max > 1 // dropped all those teachers who, at any point, taught at multiple schools in the same year
+	
+	gsort pid fallyear district_code school_code -teacher_obs
+	
+	by pid fallyear: keep if _n == 1
+	
+	replace teacher_obs = 0 if inlist(school_code, 0, 9999)
+	
+	tempfile racecong
+	save `racecong'
+	
+	bysort pid fallyear district_code school_code: keep if _n == 1
+		
+	collapse (sum) amind_t_sch=amind_t asian_t_sch=asian_t black_t_sch=black_t hisp_t_sch=hisp_t multi_t_sch=multi_t nhpi_t_sch=nhpi_t othtoc_t_sch=othtoc_t white_t_sch=white_t male_t_sch=male_t novice3_t_sch=novice3_t (count) total_t_sch=pid (mean) amind_t_prop=amind_t asian_t_prop=asian_t black_t_prop=black_t hisp_t_prop=hisp_t multi_t_prop=multi_t nhpi_t_prop=nhpi_t othtoc_t_prop=othtoc_t white_t_prop=white_t male_t_prop=male_t novice3_t_prop=novice3_t, by(district_code school_code fallyear)
+	
+	merge 1:m district_code school_code fallyear using `racecong', gen(merge_tchschvars)
+
+	save "${CLNDATA}personnel_master.dta", replace
+	
+clear all
+**** directory files
+	use "${ORIGDATA}directory2013.dta", clear	
+		drop school_id school_name leaid street_mailing city_mailing state_mailing zip_mailing street_location city_location state_location zip_location phone fips latitude longitude csa cbsa county_code congress_district_id state_leg_district_lower state_leg_district_upper teachers_fte lunch_program free_lunch reduced_price_lunch direct_certification
+		rename state_leaid district_code
+		destring district_code, replace
+		format district_code %15.0g
+		rename seasch school_code
+		destring school_code, replace
+		rename year fallyear
+	save "${CLNDATA}directory2014_clean.dta", replace
+
+	use "${ORIGDATA}directory2014.dta", clear	
+		drop school_id school_name leaid street_mailing city_mailing state_mailing zip_mailing street_location city_location state_location zip_location phone fips latitude longitude csa cbsa county_code congress_district_id state_leg_district_lower state_leg_district_upper teachers_fte lunch_program free_lunch reduced_price_lunch direct_certification
+		rename state_leaid district_code
+		destring district_code, replace
+		format district_code %15.0g
+		rename seasch school_code
+		destring school_code, replace
+		rename year fallyear
+	save "${CLNDATA}directory2015_clean.dta", replace
+	
+	use "${ORIGDATA}directory2015.dta", clear	
+		drop school_id school_name leaid street_mailing city_mailing state_mailing zip_mailing street_location city_location state_location zip_location phone fips latitude longitude csa cbsa county_code congress_district_id state_leg_district_lower state_leg_district_upper teachers_fte lunch_program free_lunch reduced_price_lunch direct_certification
+		rename state_leaid district_code
+		destring district_code, replace
+		format district_code %15.0g
+		rename seasch school_code
+		destring school_code, replace
+		rename year fallyear
+	save "${CLNDATA}directory2016_clean.dta", replace
+	
+	use "${ORIGDATA}directory2016.dta", clear	
+		drop school_id school_name leaid street_mailing city_mailing state_mailing zip_mailing street_location city_location state_location zip_location phone fips latitude longitude csa cbsa county_code congress_district_id state_leg_district_lower state_leg_district_upper teachers_fte lunch_program free_lunch reduced_price_lunch direct_certification
+		rename state_leaid district_code
+		replace district_code = substr(district_code, 4, .)
+		destring district_code, replace
+		format district_code %15.0g
+		rename seasch school_code
+		replace school_code = substr(school_code, -4, .)
+		destring school_code, replace
+		rename year fallyear
+	save "${CLNDATA}directory2017_clean.dta", replace
+
+	use "${ORIGDATA}directory2017.dta", clear	
+		drop school_id school_name leaid street_mailing city_mailing state_mailing zip_mailing street_location city_location state_location zip_location phone fips latitude longitude csa cbsa county_code congress_district_id state_leg_district_lower state_leg_district_upper teachers_fte lunch_program free_lunch reduced_price_lunch direct_certification
+		rename state_leaid district_code
+		replace district_code = substr(district_code, 4, .)
+		destring district_code, replace
+		format district_code %15.0g
+		rename seasch school_code
+		replace school_code = substr(school_code, -4, .)
+		destring school_code, replace
+		rename year fallyear
+	save "${CLNDATA}directory2018_clean.dta", replace
+	
+	use "${ORIGDATA}directory2018.dta", clear	
+		drop school_id school_name leaid street_mailing city_mailing state_mailing zip_mailing street_location city_location state_location zip_location phone fips latitude longitude csa cbsa county_code congress_district_id state_leg_district_lower state_leg_district_upper teachers_fte lunch_program free_lunch reduced_price_lunch direct_certification
+		rename state_leaid district_code
+		replace district_code = substr(district_code, 4, .)
+		destring district_code, replace
+		format district_code %15.0g
+		rename seasch school_code
+		replace school_code = substr(school_code, -4, .)
+		destring school_code, replace
+		rename year fallyear
+	save "${CLNDATA}directory2019_clean.dta", replace
+	
+	use "${ORIGDATA}directory2019.dta", clear	
+		drop school_id school_name leaid street_mailing city_mailing state_mailing zip_mailing street_location city_location state_location zip_location phone fips latitude longitude csa cbsa county_code congress_district_id state_leg_district_lower state_leg_district_upper teachers_fte lunch_program free_lunch reduced_price_lunch direct_certification
+		rename state_leaid district_code
+		replace district_code = substr(district_code, 4, .)
+		destring district_code, replace
+		format district_code %15.0g
+		rename seasch school_code
+		replace school_code = substr(school_code, -4, .)
+		destring school_code, replace
+		rename year fallyear
+	save "${CLNDATA}directory2020_clean.dta", replace
+	
+	use "${ORIGDATA}directory2020.dta", clear	
+		drop school_id school_name leaid street_mailing city_mailing state_mailing zip_mailing street_location city_location state_location zip_location phone fips latitude longitude csa cbsa county_code congress_district_id state_leg_district_lower state_leg_district_upper teachers_fte lunch_program free_lunch reduced_price_lunch direct_certification
+		rename state_leaid district_code
+		replace district_code = substr(district_code, 4, .)
+		destring district_code, replace
+		format district_code %15.0g
+		rename seasch school_code
+		replace school_code = substr(school_code, -4, .)
+		destring school_code, replace
+		rename year fallyear
+	save "${CLNDATA}directory2021_clean.dta", replace
+
+clear all
+	* append directory files and save master directory
+		use "${CLNDATA}directory2014_clean.dta", clear
+		append using "${CLNDATA}directory2015_clean.dta"
+		append using "${CLNDATA}directory2016_clean.dta"
+		append using "${CLNDATA}directory2017_clean.dta"
+		append using "${CLNDATA}directory2018_clean.dta"
+		append using "${CLNDATA}directory2019_clean.dta"
+		append using "${CLNDATA}directory2020_clean.dta"
+		append using "${CLNDATA}directory2021_clean.dta"
+		destring ncessch, replace
+		foreach var in free_or_reduced_price_lunch enrollment {
+			replace `var' = . if `var' < 0
+		}
+		
+		gen ed_s_prop = free_or_reduced_price_lunch / enrollment
+		replace ed_s_prop = 0 if enrollment == 0 | mi(enrollment) | mi(free_or_reduced_price_lunch)
+
+	save "${CLNDATA}directory_master.dta", replace
+	
+clear all
+**** enrollment files
+	use "${ORIGDATA}enrollment2013.dta", clear
+		rename year fallyear
+		preserve
+			keep if grade == 99 & race == 99 & sex == 99
+			rename enrollment enroll_s 
+			drop grade race sex fips leaid ncessch_num
+			tempfile enrollment 
+			save `enrollment'
+		restore
+		drop if grade == 99 | race == 99 | sex == 99
+			replace enrollment = . if enrollment < 0
+		tempfile master
+		save `master'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch race)
+			gen white_s_n = enrollment if race == 1
+			gen black_s_n = enrollment if race == 2
+			gen hisp_s_n = enrollment if race == 3
+			gen asian_s_n = enrollment if race == 4
+			gen amind_s_n = enrollment if race == 5
+			gen nhpi_s_n = enrollment if race == 6
+			gen multi_s_n = enrollment if race == 7
+		collapse (sum) white_s_n black_s_n hisp_s_n asian_s_n amind_s_n nhpi_s_n multi_s_n, by(ncessch)
+			gen othsoc_s_n = amind_s_n + asian_s_n + multi_s_n + nhpi_s_n
+		merge 1:1 ncessch using `enrollment', gen(merge_race)
+			replace enroll_s = 0 if mi(enroll_s)
+			replace fallyear = 2013 if mi(fallyear)
+		tempfile race
+		save `race'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch sex)
+			gen male_s_n = enrollment if sex == 1
+			gen female_s_n = enrollment if sex == 2
+		collapse (sum) male_s_n female_s_n, by(ncessch)
+		merge 1:1 ncessch using `race', gen(merge_sex)
+		foreach var in male_s female_s white_s black_s hisp_s asian_s amind_s nhpi_s multi_s othsoc_s {
+			gen `var'_prop = `var'_n / enroll_s
+		}
+		drop merge*
+	save "${CLNDATA}enrollment2014_clean.dta", replace
+			
+	use "${ORIGDATA}enrollment2014.dta", clear
+		rename year fallyear
+		preserve
+			keep if grade == 99 & race == 99 & sex == 99
+			rename enrollment enroll_s 
+			drop grade race sex fips leaid ncessch_num
+			tempfile enrollment 
+			save `enrollment'
+		restore
+		drop if grade == 99 | race == 99 | sex == 99
+			replace enrollment = . if enrollment < 0
+		tempfile master
+		save `master'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch race)
+			gen white_s_n = enrollment if race == 1
+			gen black_s_n = enrollment if race == 2
+			gen hisp_s_n = enrollment if race == 3
+			gen asian_s_n = enrollment if race == 4
+			gen amind_s_n = enrollment if race == 5
+			gen nhpi_s_n = enrollment if race == 6
+			gen multi_s_n = enrollment if race == 7
+		collapse (sum) white_s_n black_s_n hisp_s_n asian_s_n amind_s_n nhpi_s_n multi_s_n, by(ncessch)
+			gen othsoc_s_n = amind_s_n + asian_s_n + multi_s_n + nhpi_s_n
+		merge 1:1 ncessch using `enrollment', gen(merge_race)
+			replace enroll_s = 0 if mi(enroll_s)
+			replace fallyear = 2014 if mi(fallyear)
+		tempfile race
+		save `race'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch sex)
+			gen male_s_n = enrollment if sex == 1
+			gen female_s_n = enrollment if sex == 2
+		collapse (sum) male_s_n female_s_n, by(ncessch)
+		merge 1:1 ncessch using `race', gen(merge_sex)
+		foreach var in male_s female_s white_s black_s hisp_s asian_s amind_s nhpi_s multi_s othsoc_s {
+			gen `var'_prop = `var'_n / enroll_s
+		}
+		drop merge*
+	save "${CLNDATA}enrollment2015_clean.dta", replace
+
+	use "${ORIGDATA}enrollment2015.dta", clear
+		rename year fallyear
+		preserve
+			keep if grade == 99 & race == 99 & sex == 99
+			rename enrollment enroll_s 
+			drop grade race sex fips leaid ncessch_num
+			tempfile enrollment 
+			save `enrollment'
+		restore
+		drop if grade == 99 | race == 99 | sex == 99
+			replace enrollment = . if enrollment < 0
+		tempfile master
+		save `master'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch race)
+			gen white_s_n = enrollment if race == 1
+			gen black_s_n = enrollment if race == 2
+			gen hisp_s_n = enrollment if race == 3
+			gen asian_s_n = enrollment if race == 4
+			gen amind_s_n = enrollment if race == 5
+			gen nhpi_s_n = enrollment if race == 6
+			gen multi_s_n = enrollment if race == 7
+		collapse (sum) white_s_n black_s_n hisp_s_n asian_s_n amind_s_n nhpi_s_n multi_s_n, by(ncessch)
+			gen othsoc_s_n = amind_s_n + asian_s_n + multi_s_n + nhpi_s_n
+		merge 1:1 ncessch using `enrollment', gen(merge_race)
+			replace enroll_s = 0 if mi(enroll_s)
+			replace fallyear = 2015 if mi(fallyear)
+		tempfile race
+		save `race'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch sex)
+			gen male_s_n = enrollment if sex == 1
+			gen female_s_n = enrollment if sex == 2
+		collapse (sum) male_s_n female_s_n, by(ncessch)
+		merge 1:1 ncessch using `race', gen(merge_sex)
+		foreach var in male_s female_s white_s black_s hisp_s asian_s amind_s nhpi_s multi_s othsoc_s {
+			gen `var'_prop = `var'_n / enroll_s
+		}
+		drop merge*
+	save "${CLNDATA}enrollment2016_clean.dta", replace
+	
+	use "${ORIGDATA}enrollment2016.dta", clear
+		rename year fallyear
+		preserve
+			keep if grade == 99 & race == 99 & sex == 99
+			rename enrollment enroll_s 
+			drop grade race sex fips leaid ncessch_num
+			tempfile enrollment 
+			save `enrollment'
+		restore
+		drop if grade == 99 | race == 99 | sex == 99
+			replace enrollment = . if enrollment < 0
+		tempfile master
+		save `master'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch race)
+			gen white_s_n = enrollment if race == 1
+			gen black_s_n = enrollment if race == 2
+			gen hisp_s_n = enrollment if race == 3
+			gen asian_s_n = enrollment if race == 4
+			gen amind_s_n = enrollment if race == 5
+			gen nhpi_s_n = enrollment if race == 6
+			gen multi_s_n = enrollment if race == 7
+		collapse (sum) white_s_n black_s_n hisp_s_n asian_s_n amind_s_n nhpi_s_n multi_s_n, by(ncessch)
+			gen othsoc_s_n = amind_s_n + asian_s_n + multi_s_n + nhpi_s_n
+		merge 1:1 ncessch using `enrollment', gen(merge_race)
+			replace enroll_s = 0 if mi(enroll_s)
+			replace fallyear = 2016 if mi(fallyear)
+		tempfile race
+		save `race'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch sex)
+			gen male_s_n = enrollment if sex == 1
+			gen female_s_n = enrollment if sex == 2
+		collapse (sum) male_s_n female_s_n, by(ncessch)
+		merge 1:1 ncessch using `race', gen(merge_sex)
+		foreach var in male_s female_s white_s black_s hisp_s asian_s amind_s nhpi_s multi_s othsoc_s {
+			gen `var'_prop = `var'_n / enroll_s
+		}
+		drop merge*
+	save "${CLNDATA}enrollment2017_clean.dta", replace
+
+	use "${ORIGDATA}enrollment2017.dta", clear
+		rename year fallyear
+		preserve
+			keep if grade == 99 & race == 99 & sex == 99
+			rename enrollment enroll_s 
+			drop grade race sex fips leaid ncessch_num
+			tempfile enrollment 
+			save `enrollment'
+		restore
+		drop if grade == 99 | race == 99 | sex == 99
+			replace enrollment = . if enrollment < 0
+		tempfile master
+		save `master'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch race)
+			gen white_s_n = enrollment if race == 1
+			gen black_s_n = enrollment if race == 2
+			gen hisp_s_n = enrollment if race == 3
+			gen asian_s_n = enrollment if race == 4
+			gen amind_s_n = enrollment if race == 5
+			gen nhpi_s_n = enrollment if race == 6
+			gen multi_s_n = enrollment if race == 7
+		collapse (sum) white_s_n black_s_n hisp_s_n asian_s_n amind_s_n nhpi_s_n multi_s_n, by(ncessch)
+			gen othsoc_s_n = amind_s_n + asian_s_n + multi_s_n + nhpi_s_n
+		merge 1:1 ncessch using `enrollment', gen(merge_race)
+			replace enroll_s = 0 if mi(enroll_s)
+			replace fallyear = 2017 if mi(fallyear)
+		tempfile race
+		save `race'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch sex)
+			gen male_s_n = enrollment if sex == 1
+			gen female_s_n = enrollment if sex == 2
+		collapse (sum) male_s_n female_s_n, by(ncessch)
+		merge 1:1 ncessch using `race', gen(merge_sex)
+		foreach var in male_s female_s white_s black_s hisp_s asian_s amind_s nhpi_s multi_s othsoc_s {
+			gen `var'_prop = `var'_n / enroll_s
+		}
+		drop merge*
+	save "${CLNDATA}enrollment2018_clean.dta", replace
+
+	use "${ORIGDATA}enrollment2018.dta", clear
+		rename year fallyear
+		preserve
+			keep if grade == 99 & race == 99 & sex == 99
+			rename enrollment enroll_s 
+			drop grade race sex fips leaid ncessch_num
+			tempfile enrollment 
+			save `enrollment'
+		restore
+		drop if grade == 99 | race == 99 | sex == 99
+			replace enrollment = . if enrollment < 0
+		tempfile master
+		save `master'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch race)
+			gen white_s_n = enrollment if race == 1
+			gen black_s_n = enrollment if race == 2
+			gen hisp_s_n = enrollment if race == 3
+			gen asian_s_n = enrollment if race == 4
+			gen amind_s_n = enrollment if race == 5
+			gen nhpi_s_n = enrollment if race == 6
+			gen multi_s_n = enrollment if race == 7
+		collapse (sum) white_s_n black_s_n hisp_s_n asian_s_n amind_s_n nhpi_s_n multi_s_n, by(ncessch)
+			gen othsoc_s_n = amind_s_n + asian_s_n + multi_s_n + nhpi_s_n
+		merge 1:1 ncessch using `enrollment', gen(merge_race)
+			replace enroll_s = 0 if mi(enroll_s)
+			replace fallyear = 2018 if mi(fallyear)
+		tempfile race
+		save `race'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch sex)
+			gen male_s_n = enrollment if sex == 1
+			gen female_s_n = enrollment if sex == 2
+		collapse (sum) male_s_n female_s_n, by(ncessch)
+		merge 1:1 ncessch using `race', gen(merge_sex)
+		foreach var in male_s female_s white_s black_s hisp_s asian_s amind_s nhpi_s multi_s othsoc_s {
+			gen `var'_prop = `var'_n / enroll_s
+		}
+		drop merge*
+	save "${CLNDATA}enrollment2019_clean.dta", replace
+
+	use "${ORIGDATA}enrollment2019.dta", clear
+		rename year fallyear
+		preserve
+			keep if grade == 99 & race == 99 & sex == 99
+			rename enrollment enroll_s 
+			drop grade race sex fips leaid ncessch_num
+			tempfile enrollment 
+			save `enrollment'
+		restore
+		drop if grade == 99 | race == 99 | sex == 99
+			replace enrollment = . if enrollment < 0
+		tempfile master
+		save `master'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch race)
+			gen white_s_n = enrollment if race == 1
+			gen black_s_n = enrollment if race == 2
+			gen hisp_s_n = enrollment if race == 3
+			gen asian_s_n = enrollment if race == 4
+			gen amind_s_n = enrollment if race == 5
+			gen nhpi_s_n = enrollment if race == 6
+			gen multi_s_n = enrollment if race == 7
+		collapse (sum) white_s_n black_s_n hisp_s_n asian_s_n amind_s_n nhpi_s_n multi_s_n, by(ncessch)
+			gen othsoc_s_n = amind_s_n + asian_s_n + multi_s_n + nhpi_s_n
+		merge 1:1 ncessch using `enrollment', gen(merge_race)
+			replace enroll_s = 0 if mi(enroll_s)
+			replace fallyear = 2019 if mi(fallyear)
+		tempfile race
+		save `race'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch sex)
+			gen male_s_n = enrollment if sex == 1
+			gen female_s_n = enrollment if sex == 2
+		collapse (sum) male_s_n female_s_n, by(ncessch)
+		merge 1:1 ncessch using `race', gen(merge_sex)
+		foreach var in male_s female_s white_s black_s hisp_s asian_s amind_s nhpi_s multi_s othsoc_s {
+			gen `var'_prop = `var'_n / enroll_s
+		}
+		drop merge*
+	save "${CLNDATA}enrollment2020_clean.dta", replace
+
+	use "${ORIGDATA}enrollment2020.dta", clear
+		rename year fallyear
+		preserve
+			keep if grade == 99 & race == 99 & sex == 99
+			rename enrollment enroll_s 
+			drop grade race sex fips leaid ncessch_num
+			tempfile enrollment 
+			save `enrollment'
+		restore
+		drop if grade == 99 | race == 99 | sex == 99
+			replace enrollment = . if enrollment < 0
+		tempfile master
+		save `master'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch race)
+			gen white_s_n = enrollment if race == 1
+			gen black_s_n = enrollment if race == 2
+			gen hisp_s_n = enrollment if race == 3
+			gen asian_s_n = enrollment if race == 4
+			gen amind_s_n = enrollment if race == 5
+			gen nhpi_s_n = enrollment if race == 6
+			gen multi_s_n = enrollment if race == 7
+		collapse (sum) white_s_n black_s_n hisp_s_n asian_s_n amind_s_n nhpi_s_n multi_s_n, by(ncessch)
+			gen othsoc_s_n = amind_s_n + asian_s_n + multi_s_n + nhpi_s_n
+		merge 1:1 ncessch using `enrollment', gen(merge_race)
+			replace enroll_s = 0 if mi(enroll_s)
+			replace fallyear = 2020 if mi(fallyear)
+		tempfile race
+		save `race'
+		use `master', clear
+		collapse (sum) enrollment, by(ncessch sex)
+			gen male_s_n = enrollment if sex == 1
+			gen female_s_n = enrollment if sex == 2
+		collapse (sum) male_s_n female_s_n, by(ncessch)
+		merge 1:1 ncessch using `race', gen(merge_sex)
+		foreach var in male_s female_s white_s black_s hisp_s asian_s amind_s nhpi_s multi_s othsoc_s {
+			gen `var'_prop = `var'_n / enroll_s
+		}
+		drop merge*
+	save "${CLNDATA}enrollment2021_clean.dta", replace
+
+	use "${CLNDATA}enrollment2014_clean.dta", clear
+		append using "${CLNDATA}enrollment2015_clean.dta"
+		append using "${CLNDATA}enrollment2016_clean.dta"
+		append using "${CLNDATA}enrollment2017_clean.dta"
+		append using "${CLNDATA}enrollment2018_clean.dta"
+		append using "${CLNDATA}enrollment2019_clean.dta"
+		append using "${CLNDATA}enrollment2020_clean.dta"
+		append using "${CLNDATA}enrollment2021_clean.dta"
+				
+		foreach var in male_s female_s white_s black_s hisp_s asian_s amind_s nhpi_s multi_s othsoc_s {
+			replace `var'_prop = 0 if enroll_s == 0
+		}
+		
+	destring ncessch, replace
+	save "${CLNDATA}enrollment_master.dta", replace
+	
+**** ELL files
+	use "${ORIGDATA}ell1314.dta", clear
+		drop LEAName SchoolName
+		rename AUN district_code
+			destring district_code, replace
+			format district_code %15.0g
+		rename SchoolNumber school_code
+			destring school_code, replace
+		rename LEPStudents ell_s
+		gen fallyear = 2013
+		gen springyear = 2014
+	save "${ORIGDATA}ell1314_clean.dta", replace
+	use "${ORIGDATA}ell1415.dta", clear
+		drop LEAName SchoolName
+		rename AUN district_code
+			destring district_code, replace
+			format district_code %15.0g
+		rename SchoolNumber school_code
+			destring school_code, replace
+		rename LEPStudents ell_s
+		gen fallyear = 2014
+		gen springyear = 2015
+	save "${ORIGDATA}ell1415_clean.dta", replace
+	use "${ORIGDATA}ell1516.dta", clear
+		drop LEAName SchoolName
+		rename AUN district_code
+			destring district_code, replace
+			format district_code %15.0g
+		rename SchoolNumber school_code
+			destring school_code, replace
+		rename LEPStudents ell_s
+		gen fallyear = 2015
+		gen springyear = 2016
+	save "${ORIGDATA}ell1516_clean.dta", replace
+	use "${ORIGDATA}ell1617.dta", clear
+		drop LEAName SchoolName
+		rename AUN district_code
+			destring district_code, replace
+			format district_code %15.0g
+		rename SchoolNumber school_code
+			destring school_code, replace
+		rename LEPStudents ell_s
+		gen fallyear = 2016
+		gen springyear = 2017
+	save "${ORIGDATA}ell1617_clean.dta", replace
+	use "${ORIGDATA}ell1718.dta", clear
+		drop LEAName SchoolName
+		rename AUN district_code
+			destring district_code, replace
+			format district_code %15.0g
+		rename SchoolNumber school_code
+			destring school_code, replace
+		rename ELStudents ell_s
+		gen fallyear = 2017
+		gen springyear = 2018
+	save "${ORIGDATA}ell1718_clean.dta", replace
+	use "${ORIGDATA}ell1819.dta", clear
+		drop LEAName SchoolName
+		rename AUN district_code
+			destring district_code, replace
+			format district_code %15.0g
+		rename SchoolNumber school_code
+			destring school_code, replace
+		rename ELStudents ell_s
+		gen fallyear = 2018
+		gen springyear = 2019
+	save "${ORIGDATA}ell1819_clean.dta", replace
+	use "${ORIGDATA}ell1920.dta", clear
+		drop LEAName SchoolName
+		rename AUN district_code
+			destring district_code, replace
+			format district_code %15.0g
+		rename SchoolNumber school_code
+			destring school_code, replace
+		rename ELStudents ell_s
+		gen fallyear = 2019
+		gen springyear = 2020
+	save "${ORIGDATA}ell1920_clean.dta", replace
+	use "${ORIGDATA}ell2021.dta", clear
+		drop LEAName SchoolName
+		rename AUN district_code
+			destring district_code, replace
+			format district_code %15.0g
+		rename SchoolNumber school_code
+			destring school_code, replace
+		rename ELStudents ell_s
+		gen fallyear = 2020
+		gen springyear = 2021
+	save "${ORIGDATA}ell2021_clean.dta", replace
+		
+	use "${ORIGDATA}ell1314_clean.dta", clear
+		append using "${ORIGDATA}ell1415_clean.dta"
+		append using "${ORIGDATA}ell1516_clean.dta"
+		append using "${ORIGDATA}ell1617_clean.dta"
+		append using "${ORIGDATA}ell1718_clean.dta"
+		append using "${ORIGDATA}ell1819_clean.dta"
+		append using "${ORIGDATA}ell1920_clean.dta"
+		append using "${ORIGDATA}ell2021_clean.dta"
+	save "${CLNDATA}ell_master.dta", replace
+
+	
+	
+	
+	
+	
+	
+	
+
+**** merge all files together
+clear all
+	use "${CLNDATA}personnel_master.dta", clear 
+	merge m:1 district_code school_code fallyear using "${CLNDATA}directory_master.dta", gen(merge_dir)
+		drop if merge_dir == 2
+
+	merge m:1 ncessch fallyear using "${CLNDATA}enrollment_master.dta", gen(merge_enroll)
+		drop if merge_enroll == 2
+	
+	merge m:1 district_code school_code fallyear using "${CLNDATA}ell_master.dta", gen(merge_ell)
+		replace ell_s = 0 if mi(ell_s)
+		gen ell_s_prop = ell_s / enroll_s 
+		replace ell_s_prop = 0 if mi(enroll_s)
+
+	merge m:1 district_code school_code fallyear using "${CLNDATA}sped_master.dta", gen(merge_sped)
+		replace sped_s = 0 if mi(sped_s)
+		replace sped_s = 1 if sped_s == -99
+		gen sped_s_prop = sped_s / enroll_s
+		replace sped_s_prop = 0 if mi(enroll_s)
+		replace sped_s_prop = 0.00001 if sped_s == 1
+		gen sped_miss = (sped_s == 1)
+
+		tab race_eth, mi 
+			bys pid: egen race_eth_mode = mode(race_eth)
+			replace race_eth = race_eth_mode if mi(race_eth)
+			rename race_eth_mode race_stable
+			
+		gen race_stable_reg = .
+			replace race_stable_reg = 1 if race_stable == 7
+			replace race_stable_reg = 2 if race_stable == 3
+			replace race_stable_reg = 3 if race_stable == 4
+			replace race_stable_reg = 4 if inlist(race_stable, 1, 2, 5, 6) | mi(race_stable)
+			
+			
+		lab var race_stable_reg "Race/Ethnicity"
+			lab def race_stable_reg 1 "White" 2 "Black" 3 "Hispanic" 4 "Asian, American Indian, Native Hawaiian, or Multi-Racial"
+			lab val race_stable_reg race_stable_reg
+						
+		replace black_t = (race_stable == 3)
+		replace white_t = (race_stable == 7)
+		replace hisp_t = (race_stable == 4)
+		replace asian_t = (race_stable == 2)
+		replace amind_t = (race_stable == 1)
+		replace multi_t = (race_stable == 5 | mi(race_stable))
+		replace nhpi_t = (race_stable == 6)
+		replace othtoc_t = (inlist(race_stable, 1, 2, 5, 6) | mi(race_stable))
+		
+		tab race_stable_reg race_stable, mi
+		
+		drop black_t_prop hisp_t_prop white_t_prop asian_t_prop amind_t_prop multi_t_prop nhpi_t_prop othtoc_t_prop
+		
+		foreach var in black_t hisp_t white_t othtoc_t amind_t asian_t multi_t nhpi_t {
+			bysort district_code school_code fallyear: egen `var'_prop = mean(`var')
+			bysort district_code school_code fallyear: egen `var'_count = total(`var')
+		}
+		
+		sum black_t hisp_t white_t othtoc_t 
+		
+	foreach var in black hisp white othtoc {
+		gen `var'_t_lo = `var'_t_count-1
+			replace `var'_t_lo = . if `var'_t_count == 0
+		gen `var'_t_lo_prop = `var'_t_lo / total_t_sch
+			replace `var'_t_lo_prop = . if total_t_sch == 0
+	}
+	
+	gen racecong_lo = .
+		replace racecong_lo = black_t_lo if black_t == 1
+		replace racecong_lo = hisp_t_lo if hisp_t == 1
+		replace racecong_lo = othtoc_t_lo if othtoc_t == 1
+		replace racecong_lo = white_t_lo if white_t == 1
+		
+	gen racecong_bristol = racecong_lo 
+		replace racecong_bristol = 4 if racecong_lo > 4
+
+	gen racecong = .
+		replace racecong = black_t_lo_prop if black_t == 1
+		replace racecong = hisp_t_lo_prop if hisp_t == 1
+		replace racecong = othtoc_t_lo_prop if othtoc_t == 1
+		replace racecong = white_t_lo_prop if white_t == 1
+		
+	lab var racecong "Proportion of Racially Congruent Colleagues"
+
+	gen racecong_spl = .
+		replace racecong_spl = 1 if racecong == 0
+		replace racecong_spl = 2 if racecong > 0 & racecong <= 0.1
+		replace racecong_spl = 3 if racecong > 0.1 & racecong <= 0.25
+		replace racecong_spl = 4 if racecong > 0.25 & racecong <= 0.5
+		replace racecong_spl = 5 if racecong > 0.5 & racecong <= 0.75
+		replace racecong_spl = 6 if racecong > 0.75 & racecong <= 1
+		
+		lab var racecong_spl "Racially Congruent Colleagues"
+
+		lab def racecong_spl ///
+			1 "No Racially Congruent Colleagues" ///
+			2 "1-10% Racially Congruent Colleagues" ///
+			3 "11-25% Racially Congruent Colleagues" ///
+			4 "26-50% Racially Congruent Colleagues" ///
+			5 "59-75% Racially Congruent Colleagues" ///
+			6 "76-100% Racially Congruent Colleagues"
+		lab val racecong_spl racecong_spl 
+		
+
+	tostring district_code, gen(distcode_str)
+	tostring school_code, gen(schcode_str)
+	gen uniqschid = distcode_str+schcode_str
+		destring uniqschid, replace
+	
+**** want to remove teacher observations with random missing years
+	drop if mi(pid)
+	sort pid fallyear
+	xtset pid fallyear
+		bys pid: gen missobs_flag = 1 if F.fallyear != fallyear+1 & _n != _N
+		bysort pid: egen missobs_flag2 = max(missobs_flag)
+	drop if missobs_flag2 == 1
+
+**** mobility variables
+	sort pid fallyear
+	xtset pid fallyear
+		gen mobility = .
+			by pid: replace mobility = 1 if uniqschid != F.uniqschid & _n != _N /*& F.teacher_obs == 1*/ // transfer
+			by pid: replace mobility = 2 if _n == _N & fallyear != 2020 // leave PA data
+			replace mobility = 3 if mi(mobility) & uniqschid == F.uniqschid // stayer
+			*replace mobility = 4 if teacher_obs == 1 & F.teacher_obs == 0 // role_change
+		lab var mobility "Mobility"
+			lab def mobility 1 "Transfer" 2 "Leave PA Data" 3 "Stayer"
+			lab val mobility mobility
+		
+		gen transfer = (mobility == 1)
+		gen leave_pa = (mobility == 2)
+		gen leave_any = (mobility == 1 | mobility == 2)
+		
+	*drop if fallyear == 2020
+	
+	lab var leave_any "Leave School in Any Way"
+	lab var transfer "Transfer Schools"
+	lab var leave_pa "Leave PA Data"	
+
+	* dummies for elementary teacher, secondary teacher, and principals (BASED ON ASSIGNMENTS)
+	gen teacher_elem = (positioncd == "111")
+	gen teacher_secondary = (positioncd == "112")
+	
+* dummies for secondary teacher subjects (BASED ON ASSIGNMENTS)
+	destring assigncd, replace
+	gen teach_math = 1 if inlist(assigncd, 1002, 2860, 6800, 6812, 9460, 9465)
+		// computer science, middle level math, math, remedial math, alt ed math 7-9, alt ed math 10-12
+	gen teach_ela = 1 if inlist(assigncd, 2850, 3200, 7607, 9450, 9455)
+		// middle english, english/comm, dev reading, alt ed middle english, alt ed sec english
+	gen teach_science = 1 if inlist(assigncd, 2880, 4820, 8404, 8405, 8420, 8440, 8441, 8450, 8451, 8468, 8469, 8470, 8490, 9480, 9485)
+		// middle science, enviro ed, life sci, bio, chem, ess adv, ess inter, gen sci inter, gen sci adv, phys sci inter, phys sci adv, physics, interdis sci adv, alt ed sci middle, alt ed sci sec
+	gen teach_socstud = 1 if inlist(assigncd, 2870, 8805, 8830, 8840, 8842, 8845, 8860, 8861, 8865, 8870, 8875, 8880, 9470, 9475)
+		// soc stud midd, anthro, econ, geography, gov, history, psych social, psych interdisc, social sci, philosophy, soc stud, sociology, alt ed ss middle, alt ed ss sec 
+	gen teach_speced = 1 if inlist(assigncd, 2064, 9140, 9206, 9292, 9340, 9640, 9150, 9155, 9160, 9165, 9170, 9175, 9180, 9207, 9293, 9350, 9355, 9360, 9365, 9370, 9375, 9380, 9385, 9650, 9655, 9660, 9665, 9670, 9675, 9680, 9685, 9125, 9225, 9625)
+	gen teach_forlang = 1 if inlist(assigncd, 4005, 4010, 4020, 4025, 4030, 4040, 4405, 4410, 4420, 4430, 4440, 4450, 4460, 4470, 4475, 4480, 4485, 4490, 4493, 4495)
+	gen teach_esl = 1 if inlist(assigncd, 9550, 9555, 9560, 9565, 9670, 9575, 9580, 9585)
+	gen teach_other = 1 if mi(teach_math) & mi(teach_ela) & mi(teach_science) & mi(teach_socstud) & mi(teach_speced) & mi(teach_forlang) & mi(teach_esl)
+		*replace teach_other = . if teach_flag == 0
+
+	gen teach_subj = .
+		replace teach_subj = 1 if teach_math == 1
+		replace teach_subj = 2 if teach_ela == 1
+		replace teach_subj = 3 if teach_science == 1
+		replace teach_subj = 4 if teach_socstud == 1
+		replace teach_subj = 5 if teach_speced == 1
+		replace teach_subj = 6 if teach_forlang == 1
+		replace teach_subj = 7 if teach_esl == 1
+		replace teach_subj = 8 if teach_other == 1
+		replace teach_subj = 9 if teacher_elem == 1
+	label define teach_subj 1 "Math" 2 "ELA" 3 "Science" 4 "Social Studies" 5 "Special Education" 6 "Foreign Language" 7 "ESOL" 8 "Other" 9 "Elementary"
+	label values teach_subj teach_subj
+
+
+	*locale and level cleaning
+		gen locale = .
+		lab var locale "Locale"
+			replace locale = 1 if inlist(urban_centric_locale, 11, 12, 13)
+			replace locale = 2 if inlist(urban_centric_locale, 21, 22, 23, 31, 32, 33)
+			replace locale = 3 if inlist(urban_centric_locale, 41, 42, 43)
+		label define locale 1 "City" 2 "Suburb" 3 "Rural"
+		label values locale locale
+		
+		gen level = . 
+		lab var level "School Level"
+			replace level = 0 if inlist(school_level, 0)
+			replace level = 1 if inlist(school_level, 1)
+			replace level = 2 if inlist(school_level, 2)
+			replace level = 3 if inlist(school_level, 3, 7)
+			replace level = 4 if school_level == 4
+		label define level 0 "Pre-K" 1 "Elementary" 2 "Middle" 3 "High" 4 "Other"
+		label values level level
+		tab level school_level, mi
+	
+	lab var black_t "Black Teachers"
+	lab var hisp_t "Hispanic Teachers"
+	lab var othtoc_t "Asian, American Indian, Multi-Racial, and Native Hawaiian Teachers"
+	lab var white_t "White Teachers"
+	lab var male_t "Male Teachers"
+	lab var novice3_t "Novice Teachers"
+	lab var grad_degree "Graduate Degrees"
+	lab var black_s_prop "Black Students"
+	lab var hisp_s_prop "Hispanic Students"
+	lab var othsoc_s_prop "Asian, American Indian, Multi-Racial, and Native Hawaiian Students"
+	lab var white_s_prop "White Students"
+	lab var ed_s_prop "Economically Disadvantaged Students"
+	lab var ell_s_prop "English Language Learner Students"
+	lab var sped_s_prop "Special Education Students"
+	lab var male_s_prop "Male Students"
+	lab var female_s_prop "Female Students"
+	lab var enroll_s "Student Enrollment"
+
+	gen racecong10 = racecong*10
+		lab var racecong10 "Proportion of Racially Congruent Colleagues (Scaled to 10)"
+		
+	gen log_enroll = log(enroll_s)
+		replace log_enroll = 0 if enroll_s == 0
+	
+	*drop if fallyear == 2020
+	
+	gen rc_principal = ((black_t == 1 & prin_black == 1) | (white_t == 1 & prin_white == 1))
+	
+compress *
+save "${CLNDATA}race_congruence_analytic_file.dta", replace	
+	
+	
+	
+	
